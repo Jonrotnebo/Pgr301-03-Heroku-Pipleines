@@ -16,6 +16,11 @@ public class DemoController {
         return "ping";
     }
 
+    //adding comment
+
+    @GetMapping(path ="/pingPong")
+    public String pingPong(){return "pingPing";}
+
 }
 
 
