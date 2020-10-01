@@ -1,9 +1,38 @@
 language: java
+
 services:
 - docker
-script:
-- bash Docker_script.sh
+
 env:
   global:
+    - - GCP_PROJECT_ID=pgr301-03-Heroku-Pipelines
+      - IMAGE=gcr.io/pgr301-03-Heroku-Pipelines
+      - CLOUD_RUN_SERVICE=pgr301-03-Heroku-Pipelines
+      - CLOUD_RUN_REGION=us-central1
+      - CLOUDSDK_CORE_DISABLE_PROMPTS=1
+
   - secure: fTXpkm9jw0BclPQwoAT46+ayLOqKgsIoUUDpb+WS/drIVcJKani+JeP6fOKH3MPxso4UrfwuFPT/rn6wOtMUBcWeCBlLdNaLXcdZ90Ekh4+tGJcJaVF2+Pb6AgIA6tA3jSihSsn0u9oIDaiuZrwcR/OLwykfSl69P9a5cl+SmO925zFJOLzpvxoDTodeQWiikxG6j7kXDeBw8NlJSQ0H1osIlsDoTT27Ji5Sped6bpulL6H75gXNiGQiYYrG8q3vs4J7BKCZCii97+akPdqgCtD3ONz9wtDl7DmdM0tYbTjPwgYnJK3s8WXR3fC7wLv9TYfKsrEAe3jo5A0QVr8+C96NPi2XviOZlKA21B8TMSQGeEeHrW0alGeiCyh7roDg55Jl/wzUkOfK7QUKueKPnfcJtB4vI2NOg50RtoHHGC6MR6RaV0KBvpu7EcIBWKbe6FppYJXZZ/3H4JbsegzOCceED9+qDEmEra6SUqgkW1fjo4sGMVrble2TWOW6EopDCDXnuPeTjtE0x87OjIAz4tm2SrjtOTObHFA9Lsrl/NMUTWXCA0A5HOcYZXycqEUkmhHACTVhgUAS+iGEaUpWcTcrhJI2Y0hFswmuU6xySDMhCIpjWJQvUd9czj4pW2ReJC91hKIDEmK85NZiyDvfJbG1I8cy0TkpudddFgPx4Xg=
   - secure: BQMdafEkS4fyZAyJUj7+eSSeFgxYizfzmSU7TU0H0P68dXWLHrx79td1WUAKUzLo+CYmEbj9L27k6nTLhcBwUxWBgb7yVDzoAF6c7BczZTLR92AG4sA6bH6cDmaeokfqe7Nbo96S9nXhOpuZ27YCXaXWuXuBpappqVCp2SsBeDrL4psvJjLror2B02QaFKQhaGPqdZjh0/u3IBXsMipbpy1m1oJemGxSMsgHaYQd67TDNsSGw1ikgDGxGa00NI6nIgBoT5MWU73PLW4w+DnEYWfDdo6eOh7fvoglIeVpzdnZoLdGY7ls03LMzkpg2xG9WylJ/C2YxbSz8YdyF/H6QS/1KBmLf0sE5R+B0AEYFcwZ782+LAFAuQh4SRxsFof62dSr3Y8bgchbYS+qkmYfZTL1ukfi1CaFS1GPo7HdeW5aVqMNaA79AGiN9Shg2Q+1Hu15YEL19WkZSnoDtczjqaKnXQm7CMQAqSdcXq4V8HU6F4EByNmts+ib+qmcSpuhGC+Tc7yZeZ/fRq/jr2MvV4O5+ozebmbAikPh2cqN/gbLFk1p3yOHlyvY9mXSSXBiwzKGHFvlpWhE4+JzxtsJJFyvODJ3hW50f2CV+tYAKYCUeAvXRzGdiIiZ88qd0THSpCwbNTTJGGmi4jF9MnpD7JJrzkvI7fspQjEhA+D561w=
+
+before_install:
+  - openssl aes-256-cbc -K $encrypted_98d237b7dbf4_key -iv $encrypted_98d237b7dbf4_iv -in google-key.json.enc -out google-key.json -d
+  - curl https://sdk.cloud.google.com | bash > /dev/null
+  - source "$HOME/google-cloud-sdk/path.bash.inc"
+  - gcloud auth activate-service-account --key-file=google-key.json
+  - gcloud auth configure-docker
+  - gcloud config set project "${GCP_PROJECT_ID}"
+  - gcloud components install beta
+
+install: true # no-op
+
+script:
+  - |
+    set -ex;
+    docker build -t "${IMAGE}:${TRAVIS_COMMIT}" . && \
+    docker push "${IMAGE}:${TRAVIS_COMMIT}" && \
+    gcloud beta run deploy "${CLOUD_RUN_SERVICE}" \
+      --image="${IMAGE}:${TRAVIS_COMMIT}" \
+      --platform=managed \
+      --region="${CLOUD_RUN_REGION}" \
+      --allow-unauthenticated;
+    set +x
