@@ -5,9 +5,9 @@ services:
 
 env:
   global:
-    - GCP_PROJECT_ID=pgr301-03-Heroku-Pipelines
-    - IMAGE=gcr.io/pgr301-03-Heroku-Pipelines
-    - CLOUD_RUN_SERVICE=pgr301-03-Heroku-Pipelines
+    - GCP_PROJECT_ID=devopsex1
+    - IMAGE=gcr.io/pgr301-03-heroku-pipelines
+    - CLOUD_RUN_SERVICE=pgr301-03-heroku-pipelines
     - CLOUD_RUN_REGION=us-central1
     - CLOUDSDK_CORE_DISABLE_PROMPTS=1
 
