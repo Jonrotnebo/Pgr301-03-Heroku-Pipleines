@@ -5,7 +5,7 @@ services:
 
 env:
   global:
-    - GCP_PROJECT_ID=devopsex1
+    - GCP_PROJECT_ID=devopsex2
     - IMAGE=gcr.io/devopsex1
     - CLOUD_RUN_SERVICE=devopsex1
     - CLOUD_RUN_REGION=us-central1
