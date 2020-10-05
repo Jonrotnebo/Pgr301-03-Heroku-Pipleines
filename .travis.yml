@@ -6,8 +6,8 @@ services:
 env:
   global:
     - GCP_PROJECT_ID=devopsex2
-    - IMAGE=gcr.io/devopsex2
-    - CLOUD_RUN_SERVICE=devopsex2
+    - IMAGE=gcr.io/devopsex2/pgr301-03-heroku-pipleines
+    - CLOUD_RUN_SERVICE=devops-pingpong
     - CLOUD_RUN_REGION=us-central1
     - CLOUDSDK_CORE_DISABLE_PROMPTS=1
 
