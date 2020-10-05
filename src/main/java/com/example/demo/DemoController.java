@@ -20,5 +20,3 @@ public class DemoController {
     public String pingPong(){return "pingPing";}
 
 }
-
-
