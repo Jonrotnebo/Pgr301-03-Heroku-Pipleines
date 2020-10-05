@@ -16,9 +16,6 @@ public class DemoController {
         return "ping";
     }
 
-    //adding comment
-    //test
-
     @GetMapping(path ="/pingPong")
     public String pingPong(){return "pingPing";}
 
